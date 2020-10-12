@@ -2,7 +2,6 @@
  * Author: Dainius Gaižutis
  * Email:  gaizutis.dainius@gmail.com
  */
-
 //1. Write two binary functions, add and mul, that take two numbers and return their sum and product.
 function add(a, b) {
     return a+b;
@@ -109,16 +108,16 @@ function composeu(f1, f2) {
 }
 console.log(composeu(double, square)(3));    // 36
 // composeu(double, square)(3);    // 36
-
 // 8. Write a function that adds from many invocations, until it sees an empty invocation.
-function addg(a, sum) {
-    if (!sum) {
-        return (next) => addg(next, a);
+function addg(a) {
+    function addgInner(b) {
+        if (b === undefined) {
+            return a;
+        } else {
+            return addg(a+b);
+        }
     }
-    if (a === undefined) {
-        return sum;
-    }
-    return (next) => addg(next, a+sum);
+    return addgInner;
 }
 
 // addg(3)(4)(5)();     // 12
@@ -127,12 +126,16 @@ console.log(addg(3)(4)(5)());     // 12
 console.log(addg(1)(2)(4)(8)());  // 15
 
 // 9. Write a function that will take a binary function and apply it to many invocations.
-function applyg(func, acc) {
-    return (first) => {
-        if (first === undefined) return acc;
-        if (acc === undefined) return applyg(func, first);
-        return applyg(func, func(first, acc));
+function applyg(func) {
+    function applygInner(first) {
+        return (next) => {
+            if (next === undefined) {
+                return first;
+            }
+            return applygInner(func(first, next));
+        };
     };
+    return applygInner;
 }
 
 // applyg(add)(3)(4)(5)();       // 12
@@ -158,6 +161,7 @@ function fibonaccif() {
         return retval;
     }
 }
+
 const fib = fibonaccif();
 console.log(fib());    // 0
 console.log(fib());    // 1
